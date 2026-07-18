@@ -9,11 +9,9 @@
 #define NCARATTERI 4
 #define EPS 1e-4
 
-// Aggiungiamo le soglie come macro per poterle modificare al volo
 #define SOGLIA_PIATTO 0.1
 #define SOGLIA_MURO 1.8
 
-// Rimosse le macro fisse SCALA e OFFSET. Aggiunte variabili globali per la Telecamera:
 double scala_dinamica = 10.0;
 double offset_x = LARGHEZZA / 2.0;
 double offset_y = ALTEZZA / 2.0;
@@ -48,7 +46,6 @@ int main(int argc,char *argv[]){
   int npassi;
   int i;
 
-  // --- AUTO-FRAMING (CALCOLO BOUNDING BOX DELLA TELECAMERA) ---
   // Finding the max and min coordinates the curve will reach
   double minX = puntiDiControllo[0].x, maxX = puntiDiControllo[0].x;
   double minY = puntiDiControllo[0].y, maxY = puntiDiControllo[0].y;
@@ -120,7 +117,6 @@ vec2 scalaPunto(vec2 punto, double scala){
 void disegnaPunto(vec2 punto, char schermo[ALTEZZA][LARGHEZZA],char carattere){
   Index xI,yI;
 
-  // We apply the new dynamic offsets instead of the fixed one
   xI = (int) round(punto.x + offset_x);
   yI = (int) round(offset_y - punto.y);
 
@@ -193,12 +189,10 @@ char selezionaCarattere(vec2 puntiDiControllo[],double t){
       carattereSelezionato = caratteriPunto[1];
     }else{
       if(m > 0){
-        // Use the new macros
         if(m < SOGLIA_PIATTO) carattereSelezionato = caratteriPunto[1];
         else if(m > SOGLIA_MURO) carattereSelezionato = caratteriPunto[0];
         else carattereSelezionato = caratteriPunto[2];
       }else{
-        // Use the new macros (with a minus sign)
         if(m > -SOGLIA_PIATTO) carattereSelezionato = caratteriPunto[1];
         else if(m < -SOGLIA_MURO) carattereSelezionato = caratteriPunto[0];
         else carattereSelezionato = caratteriPunto[3];
