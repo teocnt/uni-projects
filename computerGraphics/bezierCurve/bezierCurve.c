@@ -16,7 +16,8 @@ double scala_dinamica = 10.0;
 double offset_x = LARGHEZZA / 2.0;
 double offset_y = ALTEZZA / 2.0;
 
-char caratteriPunto[NCARATTERI] = "|_/\\";
+char caratteriPunto[NCARATTERI] ={ '|','_','/','\\'};
+
 
 typedef int Index;
 
@@ -25,19 +26,19 @@ typedef struct{
   double y;
 }vec2;
 
-void stampa(char[][LARGHEZZA]); // Function to print the screen to the terminal
-void disegnaPunto(vec2,char[][LARGHEZZA],char); // Draw a point on the screen using the given character
-void inizializzaSchermo(char[][LARGHEZZA]); // Initialize the screen
+void stampa(char[ALTEZZA][LARGHEZZA]); // Function to print the screen to the terminal
+void disegnaPunto(vec2,char[ALTEZZA][LARGHEZZA],char); // Draw a point on the screen using the given character
+void inizializzaSchermo(char[ALTEZZA][LARGHEZZA]); // Initialize the screen
 vec2 scalaPunto(vec2,double); // Apply the scale to a point
-vec2 beizerFunction(vec2[],double); // Calculate the Bezier curve at time t using the control points
+vec2 beizerFunction(vec2[GRADO+1],double); // Calculate the Bezier curve at time t using the control points
 double distanzaPuntoPunto(vec2,vec2); // Calculate the distance between 2 points
-double lunghezzaBeizer(vec2[]); // Calculate the length of the Bezier curve using the control points
+double lunghezzaBeizer(vec2[GRADO+1]); // Calculate the length of the Bezier curve using the control points
 
 vec2 pointDiff(vec2,vec2); // Calculate the vector produced by the difference between 2 points
-vec2* calcolaSegmenti(vec2[]); // Calculate the control segments between the control points
-char selezionaCarattere(vec2[],double); // Select the character to draw on the screen based on the slope of the curve at time t
+vec2* calcolaSegmenti(vec2[GRADO+1]); // Calculate the control segments between the control points
+char selezionaCarattere(vec2[GRADO+1],double); // Select the character to draw on the screen based on the slope of the curve at time t
 
-int main(int argc,char *argv[]){
+int main(void){
   vec2 puntiDiControllo[GRADO+1] = {    // Control points defining the Bezier curve
     {-10.0,0.0},{-7.0,2.0},{-2.0,-2.0},{4.0,-5.0} // Prova pure coordinate enormi!
   };
@@ -80,7 +81,6 @@ int main(int argc,char *argv[]){
   npassi =(int)ceil(lunghezzaBeizer(puntiDiControllo)*scala_dinamica*3.0);
   if(npassi < 2 ) npassi = 2; // We want at least 2 steps just to draw the first and last control points
   
-  double passo = 1.0 / npassi;
 
   inizializzaSchermo(schermo);
   for(i = 0; i < GRADO+1; i++){
@@ -174,7 +174,7 @@ vec2 pointDiff(vec2 p1, vec2 p2){
   
 }
 
-char selezionaCarattere(vec2 puntiDiControllo[],double t){
+char selezionaCarattere(vec2 puntiDiControllo[GRADO+1],double t){
   vec2 *segmenti = calcolaSegmenti(puntiDiControllo);
   char carattereSelezionato;
   double m = 0;
@@ -203,7 +203,7 @@ char selezionaCarattere(vec2 puntiDiControllo[],double t){
   return carattereSelezionato;
 }
 
-vec2 beizerFunction(vec2 puntiDiControllo[],double t){
+vec2 beizerFunction(vec2 puntiDiControllo[GRADO+1],double t){
     vec2 puntoCalcolato;
     
     double u = 1.0 - t;

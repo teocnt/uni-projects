@@ -33,9 +33,6 @@ vec2 beizerFunction(vec2[GRADO+1],double); // Calculate the Bezier curve at time
 double distanzaPuntoPunto(vec2,vec2); // Calculate the distance between 2 points
 double lunghezzaBeizer(vec2[GRADO+1]); // Calculate the length of the Bezier curve using the control points
 
-vec2 pointDiff(vec2,vec2); // Calculate the vector produced by the difference between 2 points
-vec2* calcolaSegmenti(vec2[GRADO+1]); // Calculate the control segments between the control points
-char selezionaCarattere(vec2[GRADO+1],double); // Select the character to draw on the screen based on the slope of the curve at time t
 
 int main(void){
   vec2 puntiDiControllo[GRADO+1] = {    // Control points defining the Bezier curve
@@ -149,58 +146,6 @@ double lunghezzaBeizer(vec2 puntiDiControllo[GRADO+1]){
 }
 
 
-vec2* calcolaSegmenti(vec2 puntiDiControllo[GRADO+1]){
-  vec2* segmenti = (vec2*)malloc(GRADO * sizeof(vec2));
-  if (segmenti == NULL) {
-    fprintf(stderr, "Errore: Memoria esaurita!\n");
-    exit(EXIT_FAILURE);
-  }
-
-  int i;
-  for(i = 0; i < GRADO; i++){
-    segmenti[i] = pointDiff(puntiDiControllo[i],puntiDiControllo[i+1]);
-  }
-
-  return segmenti; 
-}
-
-vec2 pointDiff(vec2 p1, vec2 p2){
-  double x = p2.x - p1.x;
-  double y = p2.y - p1.y;
-  vec2 segmento = {x,y};
-
-  return segmento;
-  
-}
-
-char selezionaCarattere(vec2 puntiDiControllo[GRADO+1],double t){
-  vec2 *segmenti = calcolaSegmenti(puntiDiControllo);
-  char carattereSelezionato;
-  double m = 0;
-  double dx = (3 * (1-t)*(1-t) * segmenti[0].x) + (6 * (1-t) * t * segmenti[1].x) + (3 * t * t * segmenti[2].x);
-  double dy = (3 * (1-t)*(1-t) * segmenti[0].y) + (6 * (1-t) * t * segmenti[1].y) + (3 * t * t * segmenti[2].y);
-  if (fabs(dx) < EPS){
-    carattereSelezionato = caratteriPunto[0];
-  }
-  else{
-    m = dy/dx;
-    if(fabs(dy)<EPS){
-      carattereSelezionato = caratteriPunto[1];
-    }else{
-      if(m > 0){
-        if(m < SOGLIA_PIATTO) carattereSelezionato = caratteriPunto[1];
-        else if(m > SOGLIA_MURO) carattereSelezionato = caratteriPunto[0];
-        else carattereSelezionato = caratteriPunto[2];
-      }else{
-        if(m > -SOGLIA_PIATTO) carattereSelezionato = caratteriPunto[1];
-        else if(m < -SOGLIA_MURO) carattereSelezionato = caratteriPunto[0];
-        else carattereSelezionato = caratteriPunto[3];
-      }
-    }
-  }
-  free(segmenti);
-  return carattereSelezionato;
-}
 
 vec2 beizerFunction(vec2 puntiDiControllo[GRADO+1],double t){
     vec2 puntoCalcolato;
